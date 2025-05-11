@@ -137,7 +137,7 @@ void delete(int pos) {
             case 'l':
                 fp = fopen("input.txt", "r");
                 if (fp != NULL) {
-                    while (fget(line.str, MAX_CHAR_PER_LINE, fp))
+                    while (fgets(line.str, MAX_CHAR_PER_LINE, fp))
                         insert(size(), line);
                     fclose(fp);
                 }
