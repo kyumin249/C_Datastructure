@@ -19,7 +19,7 @@ Node* get_entry(int pos) {
     int i = -1;
     for (i=-1; i<pos ; i++, n=n->next)
     {
-        if (n=NULL) break;
+        if (n==NULL) break;
     }
     return n;
 }
