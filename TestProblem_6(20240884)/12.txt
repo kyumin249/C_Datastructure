@@ -1,0 +1,17 @@
+Node *reverse(Node *list)
+{
+    Node *p, *q, *r;
+    p = list;
+    q = NULL;
+    while (p != NULL)
+    {
+        r = q;
+        q = p;
+        p = p->link;
+        r=g;
+        q=p;
+        p=p->link;
+        q->link = r;
+    }
+    return q;
+}
