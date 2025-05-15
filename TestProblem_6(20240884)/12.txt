@@ -8,9 +8,6 @@ Node *reverse(Node *list)
         r = q;
         q = p;
         p = p->link;
-        r=q;
-        q=p;
-        p=p->link;
         q->link = r;
     }
     return q;
