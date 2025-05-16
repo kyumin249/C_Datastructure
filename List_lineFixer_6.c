@@ -115,7 +115,56 @@ void find_word(const char* eng) {
 }
 
 void my_fflush() { while (getchar() != '\n');}
-
+void sort_wordlist() {
+    if (head == NULL || head->link == NULL) return;
+    Node *i, *j;
+    Element temp;
+    for (i = head; i->link != NULL; i = i->link) {
+        for (j = i->link; j != NULL; j = j->link) {
+            if (strcmp(i->data.eng, j->data.eng) > 0) {
+                temp = i->data;
+                i->data = j->data;
+                j->data = temp;
+            }
+        }
+    }
+    printf("단어장이 영어 알파벳순으로 정렬되었습니다.\n");
+}
+void search_partial(const char* keyword) {
+    Node* p = head;
+    int found = 0;
+    while (p != NULL) {
+        if (strstr(p->data.eng, keyword) != NULL) {
+            printf("%s - %s", p->data.eng, p->data.kor);
+            found = 1;
+        }
+        p = p->link;
+    }
+    if (!found) printf("해당 단어(부분)를 찾을 수 없습니다.\n");
+}
+void wordlist_stats() {
+    int count = 0, maxlen = 0, minlen = 1000;
+    char longest[MAX_ENG] = "", shortest[MAX_ENG] = "";
+    Node* p = head;
+    while (p != NULL) {
+        int len = strlen(p->data.eng);
+        if (len > maxlen) {
+            maxlen = len;
+            strcpy(longest, p->data.eng);
+        }
+        if (len < minlen) {
+            minlen = len;
+            strcpy(shortest, p->data.eng);
+        }
+        count++;
+        p = p->link;
+    }
+    printf("총 단어 수: %d\n", count);
+    if (count > 0) {
+        printf("가장 긴 단어: %s (%d글자)\n", longest, maxlen);
+        printf("가장 짧은 단어: %s (%d글자)\n", shortest, minlen);
+    }
+}
 int main()
 {
     char command;
@@ -126,9 +175,16 @@ int main()
 
     init_list();
     do{
-        printf("[메뉴선택] i-입력, d-삭제, r-변경, p-출력, l-파일읽기, s-저장, f-검색, q-종료=> ");
+        printf("[메뉴선택] i-입력, d-삭제, r-변경, p-출력, l-파일읽기, s-저장, f-검색, q-종료,t-정렬,g-부분검색, m-통계 => ");
         command = getchar();
         switch(command) {
+	  case 't': sort_wordlist(); break;
+	  case 'm': wordlist_stats(); break;
+	  case 'g':
+    	printf("검색할 영어 단어(부분): ");
+    	scanf("%s", search_eng);
+    	search_partial(search_eng);
+    	break;
             case 'i':
                 printf("입력행 번호: ");
                 scanf("%d", &pos);
