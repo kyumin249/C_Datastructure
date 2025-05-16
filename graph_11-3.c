@@ -77,12 +77,18 @@ void load_graph(char* filename) {
         return;
     }
     init_graph();
-    fscanf(fp, "%d", &n);
+    if(fscanf(fp, "%d", &n) != 1) {
+        error("정점 개수 입력 오류");
+    }
     for(i = 0; i < n; i++) {
-        fscanf(fp, "%s", str);
+        if(fscanf(fp, "%s", str) != 1) {
+            error("정점 이름 입력 오류");
+        }
         insert_vertex(str[0]);
         for(j = 0; j < n; j++) {
-            fscanf(fp, "%d", &val);
+            if(fscanf(fp, "%d", &val) != 1) {
+                error("인접 행렬 입력 오류");
+            }
             if(val != 0) {
                 insert_edge(i, j);
             }
