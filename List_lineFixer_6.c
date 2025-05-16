@@ -178,13 +178,13 @@ int main()
         printf("[메뉴선택] i-입력, d-삭제, r-변경, p-출력, l-파일읽기, s-저장, f-검색, q-종료,t-정렬,g-부분검색, m-통계 => ");
         command = getchar();
         switch(command) {
-	  case 't': sort_wordlist(); break;
-	  case 'm': wordlist_stats(); break;
-	  case 'g':
-    	printf("검색할 영어 단어(부분): ");
-    	scanf("%s", search_eng);
-    	search_partial(search_eng);
-    	break;
+            case 't': sort_wordlist(); break;
+            case 'm': wordlist_stats(); break;
+            case 'g':
+                printf("검색할 영어 단어(부분): ");
+                scanf("%s", search_eng);
+                search_partial(search_eng);
+                break;
             case 'i':
                 printf("입력행 번호: ");
                 scanf("%d", &pos);
@@ -193,7 +193,12 @@ int main()
                 printf("한글 뜻: ");
                 my_fflush();
                 fgets(word.kor, MAX_KOR, stdin);
-                insert(pos, word);
+                if (pos < 0 || pos > size()) {
+                    printf("잘못된 위치입니다. 맨 뒤에 추가합니다.\n");
+                    insert(size(), word);
+                } else {
+                    insert(pos, word);
+                }
                 break;
             case 'd':
                 printf("삭제행 번호: ");
