@@ -118,7 +118,7 @@ void BFS(int v) {
 }
 
 int main() {
-    load_graph("graph1.txt");
+    load_graph("random_graph.txt");
     reset_visited();
     printf("BFS==> ");
     BFS(0);
