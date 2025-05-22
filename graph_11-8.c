@@ -4,25 +4,37 @@
 
 #define MAX_VTXS 100
 
-// 무작위 가중치 완전 그래프 생성 함수
-void generate_weighted_complete_graph(const char* filename, int nVtx, int minW, int maxW) {
-    FILE* fp = fopen(filename, "w");
+// 무작위 가중치 그래프를 파일로 저장하는 함수 (매개변수: nVtx, nEdge)
+void random_graph(int nVtx, int nEdge) {
+    int minW = 1, maxW = 20;
+    FILE* fp = fopen("random_graph.txt", "w");
     if (!fp) {
         printf("파일을 열 수 없습니다.\n");
         return;
     }
     srand((unsigned int)time(NULL));
-    fprintf(fp, "%d\n", nVtx);
-    for (int i = 0; i < nVtx; i++) {
-        fprintf(fp, "%c ", 'A' + i);
-        for (int j = 0; j < nVtx; j++) {
-            if (i == j)
-                fprintf(fp, "0 ");
-            else
-                fprintf(fp, "%d ", minW + rand() % (maxW - minW + 1));
-        }
-        fprintf(fp, "\n");
+    fprintf(fp, "%d %d\n", nVtx, nEdge);
+
+    // 간선 중복 방지용 배열
+    int** edge = (int**)calloc(nVtx, sizeof(int*));
+    for (int i = 0; i < nVtx; i++)
+        edge[i] = (int*)calloc(nVtx, sizeof(int));
+
+    int cnt = 0;
+    while (cnt < nEdge) {
+        int u = rand() % nVtx;
+        int v = rand() % nVtx;
+        if (u == v || edge[u][v]) continue;
+        int w = minW + rand() % (maxW - minW + 1);
+        fprintf(fp, "%c %c %d\n", 'A' + u, 'A' + v, w);
+        edge[u][v] = edge[v][u] = 1;
+        cnt++;
     }
+
+    for (int i = 0; i < nVtx; i++)
+        free(edge[i]);
+    free(edge);
+
     fclose(fp);
 }
 
@@ -37,13 +49,18 @@ void load_graph(const char* filename) {
         printf("그래프 파일을 열 수 없습니다.\n");
         exit(1);
     }
-    fscanf(fp, "%d", &vsize);
-    char name[16];
-    for (int i = 0; i < vsize; i++) {
-        fscanf(fp, "%s", name);
-        for (int j = 0; j < vsize; j++) {
-            fscanf(fp, "%d", &adj[i][j]);
-        }
+    fscanf(fp, "%d %*d", &vsize); // 정점 수만 읽고, 간선 수는 무시
+    char u, v;
+    int w;
+    // 인접 행렬 초기화
+    for (int i = 0; i < vsize; i++)
+        for (int j = 0; j < vsize; j++)
+            adj[i][j] = 0;
+    while (fscanf(fp, " %c %c %d", &u, &v, &w) == 3) {
+        int i = u - 'A';
+        int j = v - 'A';
+        adj[i][j] = w;
+        adj[j][i] = w;
     }
     fclose(fp);
 }
@@ -51,7 +68,6 @@ void load_graph(const char* filename) {
 void dfs(int v) {
     visited[v] = 1;
     for (int w = 0; w < vsize; w++) {
-        // 0이 아닌 가중치가 있으면 연결된 것으로 간주
         if (adj[v][w] != 0 && !visited[w])
             dfs(w);
     }
@@ -70,15 +86,12 @@ int count_connected_components() {
 }
 
 int main() {
-    int nVtx = 8; // 정점 수
-    int minW = 1, maxW = 20; // 가중치 범위
-    const char* filename = "random_graph.txt";
-
-    // 무작위 완전 가중치 그래프 생성
-    generate_weighted_complete_graph(filename, nVtx, minW, maxW);
+    int nVtx = 8;   // 정점 수
+    int nEdge = 12; // 간선 수
+    random_graph(nVtx, nEdge);
 
     // 그래프 파일 읽기
-    load_graph(filename);
+    load_graph("random_graph.txt");
 
     // 연결 성분 개수 탐색
     int nComp = count_connected_components();
