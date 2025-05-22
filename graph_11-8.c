@@ -97,4 +97,4 @@ int main() {
     printf("그래프의 연결 성분 개수: %d\n", nComp);
 
     return 0;
-}
+} //(11.1-2)

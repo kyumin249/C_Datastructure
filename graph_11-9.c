@@ -38,10 +38,48 @@ void random_graph(int nVtx, int nEdge) {
     fclose(fp);
 }
 
+void random_connected_graph(int nVtx) {
+    int minW = 1, maxW = 20;
+    int nEdge = nVtx - 1; // 최소 연결 그래프(트리)
+    FILE* fp = fopen("random_connected_graph.txt", "w");
+    if (!fp) {
+        printf("파일을 열 수 없습니다.\n");
+        return;
+    }
+    srand((unsigned int)time(NULL));
+    fprintf(fp, "%d %d\n", nVtx, nEdge);
+
+    // 간선 중복 방지용 배열
+    int** edge = (int**)calloc(nVtx, sizeof(int*));
+    for (int i = 0; i < nVtx; i++)
+        edge[i] = (int*)calloc(nVtx, sizeof(int));
+
+    // 1. 연결성 보장: 임의의 트리 생성 (nVtx-1개 간선)
+    for (int i = 1; i < nVtx; i++) {
+        int u = i;
+        int v = rand() % i; // 0 ~ i-1 중 하나와 연결
+        int w = minW + rand() % (maxW - minW + 1);
+        fprintf(fp, "%c %c %d\n", 'A' + u, 'A' + v, w);
+        edge[u][v] = edge[v][u] = 1;
+    }
+
+    // 필요하다면 추가 간선 생성 (연결성 보장 후)
+    // int extraEdges = ...;
+    // while (추가 간선 수 < extraEdges) { ... }
+
+    for (int i = 0; i < nVtx; i++)
+        free(edge[i]);
+    free(edge);
+
+    fclose(fp);
+}
+
 int main() {
     int nVtx = 8;   // 정점 수
     int nEdge = 12; // 간선 수
     random_graph(nVtx, nEdge);
     printf("random_graph.txt 파일이 생성되었습니다.\n");
+    random_connected_graph(nVtx);
+    printf("random_connected_graph.txt 파일이 생성되었습니다.\n");
     return 0;
-}
+} //(11.1-3)
