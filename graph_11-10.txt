@@ -1,0 +1,44 @@
+#include <string.h>
+
+int timer;
+int tin[MAX_VTXS], low[MAX_VTXS];
+int visited[MAX_VTXS];
+int bridgeCount;
+
+void dfs_bridge(int v, int parent, int nVtx) {
+    visited[v] = 1;
+    tin[v] = low[v] = timer++;
+
+    for (int to = 0; to < nVtx; to++) {
+        if (!adj[v][to]) continue; // 연결 안 되어 있음
+        if (to == parent) continue;
+
+        if (visited[to]) {
+            if (low[v] > tin[to]) low[v] = tin[to]; // back edge
+        } else {
+            dfs_bridge(to, v, nVtx);
+            if (low[v] > low[to]) low[v] = low[to];
+            if (low[to] > tin[v]) {
+                // 다리 발견
+                printf("Bridge%d: %c-%c\n", ++bridgeCount, 'A' + v, 'A' + to);
+            }
+        }
+    }
+}
+
+void printBridges(int nVtx) {
+    memset(visited, 0, sizeof(visited));
+    memset(tin, -1, sizeof(tin));
+    memset(low, -1, sizeof(low));
+    timer = 0;
+    bridgeCount = 0;
+
+    printf("Bridge 검사\n");
+    for (int i = 0; i < nVtx; i++) {
+        if (!visited[i]) {
+            dfs_bridge(i, -1, nVtx);
+        }
+    }
+
+    printf("총 다리 개수: %d\n", bridgeCount);
+}
