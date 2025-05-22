@@ -4,18 +4,18 @@
 
 #define MAX_VTXS 100
 
-// ë¬´ì‘ìœ„ ê°€ì¤‘ì¹˜ ê·¸ë˜í”„ë¥¼ íŒŒì¼ë¡œ ì €ì¥í•˜ëŠ” í•¨ìˆ˜ (ë§¤ê°œë³€ìˆ˜: nVtx, nEdge)
+// ¹«ÀÛÀ§ °¡ÁßÄ¡ ±×·¡ÇÁ¸¦ ÆÄÀÏ·Î ÀúÀåÇÏ´Â ÇÔ¼ö (¸Å°³º¯¼ö: nVtx, nEdge)
 void random_graph(int nVtx, int nEdge) {
     int minW = 1, maxW = 20;
     FILE* fp = fopen("random_graph.txt", "w");
     if (!fp) {
-        printf("íŒŒì¼ì„ ì—´ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.\n");
+        printf("ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù.\n");
         return;
     }
     srand((unsigned int)time(NULL));
     fprintf(fp, "%d %d\n", nVtx, nEdge);
 
-    // ê°„ì„  ì¤‘ë³µ ë°©ì§€ìš© ë°°ì—´
+    // °£¼± Áßº¹ ¹æÁö¿ë ¹è¿­
     int** edge = (int**)calloc(nVtx, sizeof(int*));
     for (int i = 0; i < nVtx; i++)
         edge[i] = (int*)calloc(nVtx, sizeof(int));
@@ -39,9 +39,9 @@ void random_graph(int nVtx, int nEdge) {
 }
 
 int main() {
-    int nVtx = 8;   // ì •ì  ìˆ˜
-    int nEdge = 12; // ê°„ì„  ìˆ˜
+    int nVtx = 8;   // Á¤Á¡ ¼ö
+    int nEdge = 12; // °£¼± ¼ö
     random_graph(nVtx, nEdge);
-    printf("random_graph.txt íŒŒì¼ì´ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤.\n");
+    printf("random_graph.txt ÆÄÀÏÀÌ »ı¼ºµÇ¾ú½À´Ï´Ù.\n");
     return 0;
 }

@@ -1,11 +1,13 @@
-6 10
-B F 9
-B D 1
-E D 12
-A F 11
-E A 17
-C D 12
-E B 8
-A C 10
-D F 7
-D A 1
+8 12
+C D 7
+D B 19
+H A 19
+E B 5
+F G 15
+E G 14
+F D 16
+H B 20
+G C 2
+C A 19
+G B 18
+G A 13
