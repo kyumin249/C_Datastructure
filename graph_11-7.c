@@ -36,10 +36,31 @@ void random_graph(int nVtx, int nEdge) {
     fclose(fp);
 }
 
+// 생성된 그래프 파일을 읽어와 출력하는 함수
+void print_graph(const char* filename) {
+    FILE* fp = fopen(filename, "r");
+    if (!fp) {
+        printf("그래프 파일을 열 수 없습니다.\n");
+        return;
+    }
+    int nVtx, nEdge;
+    printf("생성된 그래프:\n");
+    if (fscanf(fp, "%d %d", &nVtx, &nEdge) == 2) {
+        printf("정점 수: %d, 간선 수: %d\n", nVtx, nEdge);
+        char u, v;
+        int w;
+        while (fscanf(fp, " %c %c %d", &u, &v, &w) == 3) {
+            printf("%c - %c : %d\n", u, v, w);
+        }
+    }
+    fclose(fp);
+}
+
 int main() {
     int nVtx = 6;   // 정점 수
     int nEdge = 10; // 간선 수
     random_graph(nVtx, nEdge);
     printf("random_graph.txt 파일이 생성되었습니다.\n");
+    print_graph("random_graph.txt");
     return 0;
 }
