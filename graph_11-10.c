@@ -52,8 +52,40 @@ void DFSBridge(int u, int parent) {
         }
     }
 }
+void print_graph(char* msg) {
+    printf("%s%d\n", msg, vsize);
+    for (int i = 0; i < vsize; i++) {
+        printf("%c ", vdata[i]);
+        for (GNode* v = adj[i]; v != NULL; v = v->link) {
+            printf(" %c", vdata[v->id]);
+        }
+        printf("\n");
+    }
+}
 
-// âœ… ì´ í•¨ìˆ˜ê°€ ë©”ì¸ í•¨ìˆ˜ì—ì„œ í˜¸ì¶œë  ëŒ€ìƒì…ë‹ˆë‹¤
+void load_graph(char* filename) {
+    int i, j, val, n;
+    char str[80];
+    FILE* fp = fopen(filename, "r");
+    if (fp != NULL) {
+        init_graph();
+        fscanf(fp, "%d", &n);
+        for (i = 0; i < n; i++) {
+            fscanf(fp, "%s", str);
+            insert_vertex(str[0]);
+            for (j = 0; j < n; j++) {
+                fscanf(fp, "%d", &val);
+                if (val != 0) {
+                    insert_edge(i, j);
+                }
+            }
+        }
+        fclose(fp);
+    } else {
+        printf("ÆÄÀÏÀ» ¿­ ¼ö ¾ø½À´Ï´Ù: %s\n", filename);
+    }
+}
+// ? ÀÌ ÇÔ¼ö°¡ ¸ŞÀÎ ÇÔ¼ö¿¡¼­ È£ÃâµÉ ´ë»óÀÔ´Ï´Ù
 int findBridge() {
     memset(visited, 0, sizeof(visited));
     memset(disc, 0, sizeof(disc));
@@ -71,9 +103,9 @@ int findBridge() {
 
 int main() {
     load_graph("graph.txt");
-    print_graph("ê·¸ë˜í”„(ì¸ì ‘ë¦¬ìŠ¤íŠ¸)\n");
+    print_graph("±×·¡ÇÁ(ÀÎÁ¢¸®½ºÆ®)\n");
 
-    printf("\n--- ë¸Œë¦¬ì§€ íƒìƒ‰ ê²°ê³¼ ---\n");
+    printf("\n--- ºê¸®Áö Å½»ö °á°ú ---\n");
     findBridge();
 
     return 0;
