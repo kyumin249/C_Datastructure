@@ -1,91 +1,165 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-#define MAX_VERTICES 26
+#define MAX_VERTICES 100
 
-int adj[MAX_VERTICES][MAX_VERTICES];
-int visited[MAX_VERTICES];
+typedef struct GNode {
+    int id;
+    struct GNode* link;
+} GNode;
+
+int vsize = 0;
 char vdata[MAX_VERTICES];
-int vsize;
+GNode* adj[MAX_VERTICES];
 
-// 그래프 초기화
-void init_graph(int n) {
-    vsize = n;
-    for (int i = 0; i < vsize; i++) {
-        vdata[i] = 'A' + i;
-        for (int j = 0; j < vsize; j++) {
-            adj[i][j] = 0;
-        }
-    }
+int timeCounter;
+int disc[MAX_VERTICES], low[MAX_VERTICES], visited[MAX_VERTICES];
+
+void init_graph() {
+    vsize = 0;
+    for (int i = 0; i < MAX_VERTICES; i++)
+        adj[i] = NULL;
 }
 
-// 연결 그래프 생성 (무작위 간선 추가)
-void generate_connected_graph(float edge_density) {
-    // 먼저 무조건 연결되도록 n-1개의 간선 추가
-    for (int i = 1; i < vsize; i++) {
-        int j = rand() % i;  // i 이전의 아무 정점과 연결
-        adj[i][j] = adj[j][i] = 1;
-    }
-
-    // 추가 간선 무작위로 넣기
-    for (int i = 0; i < vsize; i++) {
-        for (int j = i + 1; j < vsize; j++) {
-            if (adj[i][j] == 0 && ((float)rand() / RAND_MAX) < edge_density) {
-                adj[i][j] = adj[j][i] = 1;
-            }
-        }
-    }
+void insert_vertex(char name) {
+    vdata[vsize++] = name;
 }
 
-// DFS 함수
-void DFS(int v) {
-    visited[v] = 1;
-    printf("%c ", vdata[v]);
+void insert_edge(int u, int v) {
+    GNode* node = (GNode*)malloc(sizeof(GNode));
+    node->id = v;
+    node->link = adj[u];
+    adj[u] = node;
 
-    for (int i = 0; i < vsize; i++) {
-        if (adj[v][i] && !visited[i]) {
-            DFS(i);
-        }
-    }
+    GNode* node2 = (GNode*)malloc(sizeof(GNode));
+    node2->id = u;
+    node2->link = adj[v];
+    adj[v] = node2;
 }
 
-// 그래프 출력
-void print_graph() {
-    printf("\n[인접 행렬 출력]\n");
+void print_graph(char* msg) {
+    printf("%s%d\n", msg, vsize);
     for (int i = 0; i < vsize; i++) {
-        for (int j = 0; j < vsize; j++) {
-            printf("%d ", adj[i][j]);
-        }
+        printf("%c ", vdata[i]);
+        for (GNode* v = adj[i]; v != NULL; v = v->link)
+            printf(" %c", vdata[v->id]);
         printf("\n");
     }
 }
 
-int main() {
-    srand((unsigned int)time(NULL));
+void DFSBridge(int u, int parent) {
+    visited[u] = 1;
+    disc[u] = low[u] = ++timeCounter;
 
-    int n;
-    float density = 0.3f;  // 간선 밀도 (0.0 ~ 1.0)
+    for (GNode* p = adj[u]; p != NULL; p = p->link) {
+        int v = p->id;
+        if (!visited[v]) {
+            DFSBridge(v, u);
+            if (low[v] > disc[u])
+                printf("Bridge found: %c - %c\n", vdata[u], vdata[v]);
+            if (low[u] > low[v])
+                low[u] = low[v];
+        } else if (v != parent) {
+            if (low[u] > disc[v])
+                low[u] = disc[v];
+        }
+    }
+}
 
-    printf("정점 수 입력 (최대 %d): ", MAX_VERTICES);
-    scanf("%d", &n);
+int findBridge() {
+    memset(visited, 0, sizeof(visited));
+    memset(disc, 0, sizeof(disc));
+    memset(low, 0, sizeof(low));
+    timeCounter = 0;
 
-    if (n > MAX_VERTICES || n < 2) {
-        printf("2 이상 %d 이하의 값을 입력하세요.\n", MAX_VERTICES);
-        return 1;
+    for (int i = 0; i < vsize; i++) {
+        if (!visited[i])
+            DFSBridge(i, -1);
+    }
+    return 0;
+}
+
+void load_graph(const char* filename) {
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        printf("파일을 열 수 없습니다: %s\n", filename);
+        return;
     }
 
-    init_graph(n);
-    generate_connected_graph(density);
+    init_graph();
+    int n, val;
+    fscanf(fp, "%d", &n);
 
-    print_graph();
+    for (int i = 0; i < n; i++)
+        insert_vertex('A' + i);
 
-    printf("\nDFS 방문 순서: ");
-    for (int i = 0; i < n; i++) visited[i] = 0;
-    DFS(0);  // A부터 시작
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            fscanf(fp, "%d", &val);
+            if (val == 1 && j > i)
+                insert_edge(i, j);
+        }
+    }
 
-    printf("\n");
+    fclose(fp);
+}
+
+void generate_random_connected_graph(const char* filename, int n, int maxEdges) {
+    int matrix[MAX_VERTICES][MAX_VERTICES] = { 0 };
+    srand((unsigned int)time(NULL));
+
+    // 연결을 위한 기본 트리 구조 생성
+    for (int i = 1; i < n; i++) {
+        int j = rand() % i;
+        matrix[i][j] = matrix[j][i] = 1;
+    }
+
+    int added = n - 1;
+    while (added < maxEdges) {
+        int u = rand() % n;
+        int v = rand() % n;
+        if (u != v && matrix[u][v] == 0) {
+            matrix[u][v] = matrix[v][u] = 1;
+            added++;
+        }
+    }
+
+    FILE* fp = fopen(filename, "w");
+    if (fp == NULL) {
+        printf("파일 생성 실패: %s\n", filename);
+        return;
+    }
+
+    fprintf(fp, "%d\n", n);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            fprintf(fp, "%d ", matrix[i][j]);
+        fprintf(fp, "\n");
+    }
+
+    fclose(fp);
+    printf("무작위 그래프가 생성되었습니다: %s\n", filename);
+}
+
+int main() {
+    const char* filename = "graph.txt";
+    int vertex_count = 6;
+    int max_edges = 10;
+
+    // 그래프 자동 생성
+    generate_random_connected_graph(filename, vertex_count, max_edges);
+
+    // 파일로부터 그래프 불러오기
+    load_graph(filename);
+    print_graph("그래프(인접리스트)\n");
+
+    printf("\n--- 브리지 탐색 결과 ---\n");
+    findBridge();
 
     return 0;
 }
+
+
 
