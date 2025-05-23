@@ -97,7 +97,7 @@ void iterative_DFS(Node** graph, int start, int n, int* visit_order) {
     free(visited);
 }
 
-double measure_execution_time(Node** graph, int n, int repeat) {
+void measure_total_execution_time(Node** graph, int n, int repeat) {
     clock_t start_time, end_time;
     int* visit_order = (int*)malloc(n * sizeof(int));
     
@@ -107,26 +107,35 @@ double measure_execution_time(Node** graph, int n, int repeat) {
     }
     end_time = clock();
     
-    double elapsed = (double)(end_time - start_time) / CLOCKS_PER_SEC / repeat;
-    printf("정점 개수 = %4d, 실행 시간: %.8f 초\n", n, elapsed);
+    double elapsed = (double)(end_time - start_time) / CLOCKS_PER_SEC;
+    printf("Number of vertices = %4d, Total execution time for %d runs: %.8f seconds\n", n, repeat, elapsed);
     
     free(visit_order);
-    return elapsed;
 }
 
 int main() {
     srand((unsigned int)time(NULL));
     
-    int repeat = 1000;
-    double elapsed = 0.0;
+    int n = 5;
+    Node** graph = create_graph(n);
+    generate_connected_graph(graph, n);
+    
+    int visit_order[5];
+    printf("[Number of vertices=%d DFS visit order]\n", n);
+    iterative_DFS(graph, 0, n, visit_order);
+    for (int i = 0; i < n; i++) 
+        printf("%d -> ", visit_order[i]);
+    printf("\n\n");
+    free_graph(graph, n);
 
-    printf("각 정점 개수별 실행 시간 (0.0015초를 넘으면 종료):\n");
-    for (int size = 5; ; size += 5) {
+    int repeat = 1000;
+
+    printf("Total execution time for each number of vertices:\n");
+    for (int size = 5; size <= 255; size += 5) {
         Node** graph = create_graph(size);
         generate_connected_graph(graph, size);
-        elapsed = measure_execution_time(graph, size, repeat);
+        measure_total_execution_time(graph, size, repeat);
         free_graph(graph, size);
-        if (elapsed > 0.00015) break;
     }
 
     return 0;
