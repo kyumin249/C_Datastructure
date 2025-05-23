@@ -1,17 +1,17 @@
 import matplotlib.pyplot as plt
 
-# ë°ì´í„° ì…ë ¥
+# µ¥ÀÌÅÍ ÀÔ·Â
 vertex_counts = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-avg_times = [0.00001000, 0.00002900, 0.00005200, 0.00006000, 0.00006300,
-             0.00007600, 0.00008800, 0.00012800, 0.00018800, 0.00014300]
+avg_times = [0.00000700, 0.00002800, 0.00004400, 0.00005100, 0.00006900,
+             0.00007700, 0.00008200, 0.00010800, 0.00011500, 0.00012000]
 
-# ê·¸ë˜í”„ ê·¸ë¦¬ê¸°
+# ±×·¡ÇÁ ±×¸®±â
 plt.figure(figsize=(8, 5))
-plt.plot(vertex_counts, avg_times, marker='o', linestyle='-', color='b', label='í‰ê·  ì‹¤í–‰ ì‹œê°„')
+plt.plot(vertex_counts, avg_times, marker='o', linestyle='-', color='b', label='Æò±Õ ½ÇÇà ½Ã°£')
 
-plt.title('ì •ì  ê°œìˆ˜ì— ë”°ë¥¸ DFS í‰ê·  ì‹¤í–‰ ì‹œê°„')
-plt.xlabel('ì •ì  ê°œìˆ˜')
-plt.ylabel('í‰ê·  ì‹¤í–‰ ì‹œê°„ (ì´ˆ)')
+plt.title('Á¤Á¡ °³¼ö¿¡ µû¸¥ DFS Æò±Õ ½ÇÇà ½Ã°£')
+plt.xlabel('Á¤Á¡ °³¼ö')
+plt.ylabel('Æò±Õ ½ÇÇà ½Ã°£ (ÃÊ)')
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
