@@ -15,7 +15,7 @@ int disc[MAX_VERTICES], low[MAX_VERTICES], visited[MAX_VERTICES];
 void init_graph(int size) {
     vsize = size;
     for (int i = 0; i < vsize; i++) {
-        vdata[i] = 'A' + i;  // ì´ë¦„ ë¶€ì—¬ (A, B, C, ...)
+        vdata[i] = 'A' + i;  // ÀÌ¸§ ºÎ¿© (A, B, C, ...)
         for (int j = 0; j < vsize; j++) {
             adj[i][j] = 0;
         }
@@ -26,7 +26,7 @@ void generate_random_binary_matrix(float edge_probability) {
     for (int i = 0; i < vsize; i++) {
         for (int j = i + 1; j < vsize; j++) {
             if (((float)rand() / RAND_MAX) < edge_probability) {
-                adj[i][j] = adj[j][i] = 1;  // ë¬´ë°©í–¥
+                adj[i][j] = adj[j][i] = 1;  // ¹«¹æÇâ
             }
         }
     }
@@ -44,7 +44,7 @@ void print_graph(char* msg) {
         printf("\n");
     }
 
-    printf("\n[ì¸ì ‘ í–‰ë ¬ ì¶œë ¥]\n");
+    printf("\n[ÀÎÁ¢ Çà·Ä Ãâ·Â]\n");
     for (int i = 0; i < vsize; i++) {
         for (int j = 0; j < vsize; j++) {
             printf("%d ", adj[i][j]);
@@ -90,15 +90,15 @@ int findBridge() {
 int main() {
     srand((unsigned int)time(NULL));
 
-    int size = 6;              // ì •ì  ìˆ˜
-    float density = 0.4f;      // ê°„ì„ ì´ ìžˆì„ í™•ë¥ 
+    int size = 6;              // Á¤Á¡ ¼ö
+    float density = 0.4f;      // °£¼±ÀÌ ÀÖÀ» È®·ü
 
     init_graph(size);
     generate_random_binary_matrix(density);
 
-    print_graph("0ê³¼ 1ë¡œ êµ¬ì„±ëœ ë¬´ìž‘ìœ„ ì¸ì ‘ í–‰ë ¬ ê·¸ëž˜í”„\n");
+    print_graph("0°ú 1·Î ±¸¼ºµÈ ¹«ÀÛÀ§ ÀÎÁ¢ Çà·Ä ±×·¡ÇÁ\n");
 
-    printf("\n--- ë¸Œë¦¬ì§€ íƒìƒ‰ ê²°ê³¼ ---\n");
+    printf("\n--- ºê¸®Áö Å½»ö °á°ú ---\n");
     findBridge();
 
     return 0;
