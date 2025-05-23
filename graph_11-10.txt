@@ -1,46 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-int timer;
-int tin[MAX_VTXS], low[MAX_VTXS];
-int visited[MAX_VTXS];
-int bridgeCount;
+#define MAX_VERTICES 100
 
-void dfs_bridge(int v, int parent, int nVtx) {
-    visited[v] = 1;
-    tin[v] = low[v] = timer++;
+typedef struct GNode {
+    int id;
+    struct GNode* link;
+} GNode;
 
-    for (int to = 0; to < nVtx; to++) {
-        if (!adj[v][to]) continue; // 연결 안 되어 있음
-        if (to == parent) continue;
+int vsize = 0;
+char vdata[MAX_VERTICES];
+GNode* adj[MAX_VERTICES];
 
-        if (visited[to]) {
-            if (low[v] > tin[to]) low[v] = tin[to]; // back edge
-        } else {
-            dfs_bridge(to, v, nVtx);
-            if (low[v] > low[to]) low[v] = low[to];
-            if (low[to] > tin[v]) {
-                // 다리 발견
-                printf("Bridge%d: %c-%c\n", ++bridgeCount, 'A' + v, 'A' + to);
+int timeCounter;
+int disc[MAX_VERTICES], low[MAX_VERTICES], visited[MAX_VERTICES];
+
+void init_graph() {
+    vsize = 0;
+    for (int i = 0; i < MAX_VERTICES; i++) {
+        adj[i] = NULL;
+    }
+}
+
+void insert_vertex(char name) {
+    vdata[vsize++] = name;
+}
+
+void insert_edge(int u, int v) {
+    GNode* node = (GNode*)malloc(sizeof(GNode));
+    node->id = v;
+    node->link = adj[u];
+    adj[u] = node;
+}
+
+void DFSBridge(int u, int parent) {
+    visited[u] = 1;
+    disc[u] = low[u] = ++timeCounter;
+
+    for (GNode* p = adj[u]; p != NULL; p = p->link) {
+        int v = p->id;
+        if (!visited[v]) {
+            DFSBridge(v, u);
+            low[u] = (low[u] < low[v]) ? low[u] : low[v];
+
+            if (low[v] > disc[u]) {
+                printf("Bridge found: %c - %c\n", vdata[u], vdata[v]);
             }
+        } else if (v != parent) {
+            low[u] = (low[u] < disc[v]) ? low[u] : disc[v];
         }
     }
 }
 
-void printBridges(int nVtx) {
+// ✅ 이 함수가 메인 함수에서 호출될 대상입니다
+int findBridge() {
     memset(visited, 0, sizeof(visited));
-    memset(tin, -1, sizeof(tin));
-    memset(low, -1, sizeof(low));
-    timer = 0;
-    bridgeCount = 0;
+    memset(disc, 0, sizeof(disc));
+    memset(low, 0, sizeof(low));
+    timeCounter = 0;
 
-    printf("Bridge 검사\n");
-    for (int i = 0; i < nVtx; i++) {
+    for (int i = 0; i < vsize; i++) {
         if (!visited[i]) {
-            dfs_bridge(i, -1, nVtx);
+            DFSBridge(i, -1);
         }
     }
 
-    printf("총 다리 개수: %d\n", bridgeCount);
+    return 0;
 }
+
 
 //11.2
