@@ -1,18 +1,29 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 
-# Data input
-vertex_counts = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
-avg_times = [0.00000700, 0.00002800, 0.00004400, 0.00005100, 0.00006900,
-             0.00007700, 0.00008200, 0.00010800, 0.00011500, 0.00012000]
+# 데이터 입력
+vertex_counts = [
+     5,  10,  15,  20,  25,  30,  35,  40,  45,  50,
+    55,  60,  65,  70,  75,  80,  85,  90,  95, 100,
+   105, 110, 115, 120, 125, 130, 135, 140, 145, 150,
+   155, 160, 165, 170, 175, 180, 185, 190, 195, 200,
+   205, 210, 215, 220, 225, 230, 235, 240, 245, 250, 255
+]
+total_times = [
+    0.00000000, 0.00000000, 0.00600000, 0.00400000, 0.00400000, 0.00300000, 0.00900000, 0.00800000, 0.00500000, 0.00500000,
+    0.01000000, 0.00400000, 0.01300000, 0.01600000, 0.01100000, 0.01900000, 0.01500000, 0.01700000, 0.01700000, 0.01200000,
+    0.01900000, 0.01500000, 0.01300000, 0.01400000, 0.01000000, 0.01600000, 0.02100000, 0.02000000, 0.01800000, 0.01900000,
+    0.01900000, 0.01800000, 0.01500000, 0.02500000, 0.01800000, 0.02600000, 0.02100000, 0.02200000, 0.02100000, 0.02500000,
+    0.02200000, 0.02500000, 0.02300000, 0.02500000, 0.02200000, 0.03400000, 0.02600000, 0.02200000, 0.02400000, 0.03300000, 0.03400000
+]
 
-# Draw the graph
-plt.figure(figsize=(8, 5))
-plt.plot(vertex_counts, avg_times, marker='o', linestyle='-', color='b', label='Average Execution Time')
+# 그래프 그리기
+plt.figure(figsize=(10, 6))
+plt.plot(vertex_counts, total_times, marker='o', linestyle='-', color='b', label='Total Execution Time (1000 runs)')
 
-plt.title('Average DFS Execution Time by Number of Vertices')
+plt.title('Total DFS Execution Time for 1000 Runs by Number of Vertices')
 plt.xlabel('Number of Vertices')
-plt.ylabel('Average Execution Time (seconds)')
+plt.ylabel('Total Execution Time (seconds)')
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
