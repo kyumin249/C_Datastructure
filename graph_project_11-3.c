@@ -9,7 +9,7 @@ int visited[MAX_VERTICES];
 char vdata[MAX_VERTICES];
 int vsize;
 
-// ê·¸ëž˜í”„ ì´ˆê¸°í™”
+// ±×·¡ÇÁ ÃÊ±âÈ­
 void init_graph(int n) {
     vsize = n;
     for (int i = 0; i < vsize; i++) {
@@ -20,15 +20,15 @@ void init_graph(int n) {
     }
 }
 
-// ì—°ê²° ê·¸ëž˜í”„ ìƒì„± (ë¬´ìž‘ìœ„ ê°„ì„  ì¶”ê°€)
+// ¿¬°á ±×·¡ÇÁ »ý¼º (¹«ÀÛÀ§ °£¼± Ãß°¡)
 void generate_connected_graph(float edge_density) {
-    // ë¨¼ì € ë¬´ì¡°ê±´ ì—°ê²°ë˜ë„ë¡ n-1ê°œì˜ ê°„ì„  ì¶”ê°€
+    // ¸ÕÀú ¹«Á¶°Ç ¿¬°áµÇµµ·Ï n-1°³ÀÇ °£¼± Ãß°¡
     for (int i = 1; i < vsize; i++) {
-        int j = rand() % i;  // i ì´ì „ì˜ ì•„ë¬´ ì •ì ê³¼ ì—°ê²°
+        int j = rand() % i;  // i ÀÌÀüÀÇ ¾Æ¹« Á¤Á¡°ú ¿¬°á
         adj[i][j] = adj[j][i] = 1;
     }
 
-    // ì¶”ê°€ ê°„ì„  ë¬´ìž‘ìœ„ë¡œ ë„£ê¸°
+    // Ãß°¡ °£¼± ¹«ÀÛÀ§·Î ³Ö±â
     for (int i = 0; i < vsize; i++) {
         for (int j = i + 1; j < vsize; j++) {
             if (adj[i][j] == 0 && ((float)rand() / RAND_MAX) < edge_density) {
@@ -38,7 +38,7 @@ void generate_connected_graph(float edge_density) {
     }
 }
 
-// DFS í•¨ìˆ˜
+// DFS ÇÔ¼ö
 void DFS(int v) {
     visited[v] = 1;
     printf("%c ", vdata[v]);
@@ -50,9 +50,9 @@ void DFS(int v) {
     }
 }
 
-// ê·¸ëž˜í”„ ì¶œë ¥
+// ±×·¡ÇÁ Ãâ·Â
 void print_graph() {
-    printf("\n[ì¸ì ‘ í–‰ë ¬ ì¶œë ¥]\n");
+    printf("\n[ÀÎÁ¢ Çà·Ä Ãâ·Â]\n");
     for (int i = 0; i < vsize; i++) {
         for (int j = 0; j < vsize; j++) {
             printf("%d ", adj[i][j]);
@@ -65,13 +65,13 @@ int main() {
     srand((unsigned int)time(NULL));
 
     int n;
-    float density = 0.3f;  // ê°„ì„  ë°€ë„ (0.0 ~ 1.0)
+    float density = 0.3f;  // °£¼± ¹Ðµµ (0.0 ~ 1.0)
 
-    printf("ì •ì  ìˆ˜ ìž…ë ¥ (ìµœëŒ€ %d): ", MAX_VERTICES);
+    printf("Á¤Á¡ ¼ö ÀÔ·Â (ÃÖ´ë %d): ", MAX_VERTICES);
     scanf("%d", &n);
 
     if (n > MAX_VERTICES || n < 2) {
-        printf("2 ì´ìƒ %d ì´í•˜ì˜ ê°’ì„ ìž…ë ¥í•˜ì„¸ìš”.\n", MAX_VERTICES);
+        printf("2 ÀÌ»ó %d ÀÌÇÏÀÇ °ªÀ» ÀÔ·ÂÇÏ¼¼¿ä.\n", MAX_VERTICES);
         return 1;
     }
 
@@ -80,9 +80,9 @@ int main() {
 
     print_graph();
 
-    printf("\nDFS ë°©ë¬¸ ìˆœì„œ: ");
+    printf("\nDFS ¹æ¹® ¼ø¼­: ");
     for (int i = 0; i < n; i++) visited[i] = 0;
-    DFS(0);  // Aë¶€í„° ì‹œìž‘
+    DFS(0);  // AºÎÅÍ ½ÃÀÛ
 
     printf("\n");
 
