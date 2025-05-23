@@ -131,7 +131,7 @@ int main() {
     int repeat = 1000;
 
     printf("각 정점 개수별 평균 실행 시간:\n");
-    for (int size = 100; size <= 1000; size += 100) {
+    for (int size = 5; size <= 255; size += 5) {
         Node** graph = create_graph(size);
         generate_connected_graph(graph, size);
         measure_execution_time(graph, size, repeat);
@@ -140,4 +140,5 @@ int main() {
 
     return 0;
 }
+
 
