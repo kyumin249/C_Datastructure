@@ -126,7 +126,7 @@ int main() {
         generate_connected_graph(graph, size);
         elapsed = measure_execution_time(graph, size, repeat);
         free_graph(graph, size);
-        if (elapsed > 0.0015) break;
+        if (elapsed > 0.00015) break;
     }
 
     return 0;
