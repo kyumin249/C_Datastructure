@@ -2,119 +2,90 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_VERTICES 10  // 정점 개수
-#define MAX_EDGES 20     // 최대 간선 수
+#define MAX_VERTICES 26
 
-typedef struct Node {
-    int vertex;
-    struct Node* next;
-} Node;
+int adj[MAX_VERTICES][MAX_VERTICES];
+int visited[MAX_VERTICES];
+char vdata[MAX_VERTICES];
+int vsize;
 
-typedef struct Graph {
-    int numVertices;
-    Node* adjList[MAX_VERTICES];
-    int visited[MAX_VERTICES];
-} Graph;
-
-Node* createNode(int v) {
-    Node* newNode = malloc(sizeof(Node));
-    newNode->vertex = v;
-    newNode->next = NULL;
-    return newNode;
-}
-
-Graph* createGraph(int vertices) {
-    Graph* graph = malloc(sizeof(Graph));
-    graph->numVertices = vertices;
-    for (int i = 0; i < vertices; i++) {
-        graph->adjList[i] = NULL;
-        graph->visited[i] = 0;
-    }
-    return graph;
-}
-
-void addEdge(Graph* graph, int src, int dest) {
-    Node* newNode = createNode(dest);
-    newNode->next = graph->adjList[src];
-    graph->adjList[src] = newNode;
-
-    newNode = createNode(src);  // 무방향 그래프
-    newNode->next = graph->adjList[dest];
-    graph->adjList[dest] = newNode;
-}
-
-int isConnected(Graph* graph, int src, int dest) {
-    Node* temp = graph->adjList[src];
-    while (temp != NULL) {
-        if (temp->vertex == dest) return 1;
-        temp = temp->next;
-    }
-    return 0;
-}
-
-// 최소 연결 그래프 생성 (트리 구조로)
-void generateConnectedGraph(Graph* graph) {
-    int connected[MAX_VERTICES] = {0};
-    connected[0] = 1;
-
-    for (int i = 1; i < graph->numVertices; i++) {
-        int u = rand() % i;  // 이미 연결된 노드 중 하나 선택
-        addEdge(graph, u, i);
-        connected[i] = 1;
-    }
-
-    // 추가 간선 (랜덤)
-    int extraEdges = rand() % (MAX_EDGES - (graph->numVertices - 1));
-    for (int i = 0; i < extraEdges; i++) {
-        int a = rand() % graph->numVertices;
-        int b = rand() % graph->numVertices;
-        if (a != b && !isConnected(graph, a, b)) {
-            addEdge(graph, a, b);
+// 그래프 초기화
+void init_graph(int n) {
+    vsize = n;
+    for (int i = 0; i < vsize; i++) {
+        vdata[i] = 'A' + i;
+        for (int j = 0; j < vsize; j++) {
+            adj[i][j] = 0;
         }
     }
 }
 
-void DFS(Graph* graph, int vertex) {
-    graph->visited[vertex] = 1;
-    printf("%d ", vertex);
+// 연결 그래프 생성 (무작위 간선 추가)
+void generate_connected_graph(float edge_density) {
+    // 먼저 무조건 연결되도록 n-1개의 간선 추가
+    for (int i = 1; i < vsize; i++) {
+        int j = rand() % i;  // i 이전의 아무 정점과 연결
+        adj[i][j] = adj[j][i] = 1;
+    }
 
-    Node* temp = graph->adjList[vertex];
-    while (temp != NULL) {
-        int v = temp->vertex;
-        if (!graph->visited[v]) {
-            DFS(graph, v);
+    // 추가 간선 무작위로 넣기
+    for (int i = 0; i < vsize; i++) {
+        for (int j = i + 1; j < vsize; j++) {
+            if (adj[i][j] == 0 && ((float)rand() / RAND_MAX) < edge_density) {
+                adj[i][j] = adj[j][i] = 1;
+            }
         }
-        temp = temp->next;
     }
 }
 
-void printGraph(Graph* graph) {
-    printf("=== 그래프 인접 리스트 ===\n");
-    for (int i = 0; i < graph->numVertices; i++) {
-        printf("%d: ", i);
-        Node* temp = graph->adjList[i];
-        while (temp != NULL) {
-            printf("%d -> ", temp->vertex);
-            temp = temp->next;
+// DFS 함수
+void DFS(int v) {
+    visited[v] = 1;
+    printf("%c ", vdata[v]);
+
+    for (int i = 0; i < vsize; i++) {
+        if (adj[v][i] && !visited[i]) {
+            DFS(i);
         }
-        printf("NULL\n");
+    }
+}
+
+// 그래프 출력
+void print_graph() {
+    printf("\n[인접 행렬 출력]\n");
+    for (int i = 0; i < vsize; i++) {
+        for (int j = 0; j < vsize; j++) {
+            printf("%d ", adj[i][j]);
+        }
+        printf("\n");
     }
 }
 
 int main() {
-    srand(time(NULL)); // 시드 초기화
+    srand((unsigned int)time(NULL));
 
-    Graph* graph = createGraph(MAX_VERTICES);
+    int n;
+    float density = 0.3f;  // 간선 밀도 (0.0 ~ 1.0)
 
-    generateConnectedGraph(graph);
+    printf("정점 수 입력 (최대 %d): ", MAX_VERTICES);
+    scanf("%d", &n);
 
-    printGraph(graph);
+    if (n > MAX_VERTICES || n < 2) {
+        printf("2 이상 %d 이하의 값을 입력하세요.\n", MAX_VERTICES);
+        return 1;
+    }
+
+    init_graph(n);
+    generate_connected_graph(density);
+
+    print_graph();
 
     printf("\nDFS 방문 순서: ");
-    DFS(graph, 0);
+    for (int i = 0; i < n; i++) visited[i] = 0;
+    DFS(0);  // A부터 시작
 
     printf("\n");
 
     return 0;
 }
-//11.3-1
+
