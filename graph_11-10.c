@@ -69,5 +69,14 @@ int findBridge() {
     return 0;
 }
 
+int main() {
+    load_graph("graph.txt");
+    print_graph("그래프(인접리스트)\n");
+
+    printf("\n--- 브리지 탐색 결과 ---\n");
+    findBridge();
+
+    return 0;
+}
 
 //11.2
